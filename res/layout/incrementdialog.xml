@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/incrementDialog"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    android:background="@drawable/android_bg2"
+    android:layout_marginTop="10dp">
+
+    <TextView 
+        android:id="@+id/incrementTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="Click the amount to increment by"
+        android:paddingLeft="20dp"
+        android:paddingTop="18dp"
+        android:textColor="#000000"
+        android:textSize="15dp"
+        android:layout_marginBottom="5dp"
+        />
+<ToggleButton 
+    android:id="@+id/incrementToggle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/toggle"
+    android:textOn=""
+    android:textOff=""
+    android:checked="true"
+    android:gravity="center"
+    android:layout_gravity="center_horizontal"
+    />
+  
+
+</LinearLayout>

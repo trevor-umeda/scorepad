@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+    <string name="hello">Score Pad</string>
+    <string name="app_name">Score Pad</string>
+    <string name="gamesListTitle">List of Games </string>
+    <string name="no_games">No game rules created yet.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nClick New Game Rules to begin!</string>
+    <string name="menu_delete">Delete Game Rules</string>
+    <string name="menu_newgame">Restart Game Scores</string>
+    <string name="gameDb">Games database</string>
+    <string name="titleNewGame">New Game Rules</string>
+    <string name="title">Game Title:</string>
+    <string name="confirm">Confirm</string>
+    <string name="starting_points">Amount of Starting Points:</string>
+    <string name="num_of_players">Number of Players:</string>
+    <string name="num_of_cust_amounts">Number of Custom Amounts:</string>
+    <string name="name_of_points">Name of Points</string>
+    <string name="pointsDefault">Points</string>
+    <string name="help">Help</string>
+    <string name="newGameScreenTitle">Enter Game Rules</string>
+    <string-array name="numbers_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+</resources>
