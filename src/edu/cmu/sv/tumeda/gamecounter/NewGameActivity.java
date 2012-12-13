@@ -43,27 +43,25 @@ public class NewGameActivity extends Activity {
     private Spinner amountsSpinner;
     private ArrayList<EditText> amountList;
     private Long mRowId;
-    private GamesDbAdapter mDbHelper;
     private int incrementingId;
     private GameCounterApplication gameCounter;
     private int allowCustomValues;
-	@Override
+	//Set up the ui elements
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		 super.onCreate(savedInstanceState);
 		 gameCounter = (GameCounterApplication)getApplication();
-
+		 //Set the basic content stuff
 	        setContentView(R.layout.newgames);
 	        setTitle(R.string.titleNewGame);
 	        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Celeste_Hand.ttf");  
 
+	        //Set title for game form
 	        mTitleText = (EditText) findViewById(R.id.title);
-	        mTitleText.setSingleLine();
-			//mTitleText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-			//mTitleText.setBackgroundDrawable(null);
+	        mTitleText.setSingleLine();			
 			mTitleText.setOnKeyListener(new OnKeyListener() {
 	            public boolean onKey(View v, int keyCode, KeyEvent event) {
 	                // If the event is a key-down event on the "enter" button
-	            	//Log.d(TAG,"KEY PRESSED " +keyCode);
 	                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&(
 	                    (keyCode == KeyEvent.KEYCODE_ENTER)))  {
 	                  // Perform action on key press
@@ -72,7 +70,8 @@ public class NewGameActivity extends Activity {
 	                }
 	                return false;
 	            }				
-	        });			
+	        });		
+			//Create form for starting amount of points
 	        mStartingAmountText = (EditText) findViewById(R.id.starting_points);
 	        mStartingAmountText.setSingleLine();
 	        mStartingAmountText.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -80,7 +79,7 @@ public class NewGameActivity extends Activity {
 	        		new EditText.OnEditorActionListener(){
 	        			@Override
 	        			public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
-	        				
+	        				//On enter hide the textbox to signify its done
 	        				if(actionId == EditorInfo.IME_ACTION_DONE){
 	        			     	mStartingAmountText.setBackgroundDrawable(null);
 	        			     	InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -93,7 +92,6 @@ public class NewGameActivity extends Activity {
 	        mStartingAmountText.setOnKeyListener(new OnKeyListener() {
 	            public boolean onKey(View v, int keyCode, KeyEvent event) {
 	                // If the event is a key-down event on the "enter" button
-	            	//Log.d(TAG,"KEY PRESSED " +keyCode);
 	                if ((event.getAction() == KeyEvent.ACTION_DOWN) && 
 	                    (keyCode == KeyEvent.KEYCODE_ENTER) )  {
 	                  // Perform action on key press
@@ -103,45 +101,40 @@ public class NewGameActivity extends Activity {
 	                return false;
 	            }				
 	        });		
-	        spinner = (Spinner) findViewById(R.id.spinner);
-	        
+	        //Create spinner for num of players
+	        spinner = (Spinner) findViewById(R.id.spinner);	        
 	        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
 	                this, R.array.numbers_array, android.R.layout.simple_spinner_item);
 	        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	        spinner.setAdapter(adapter);
-	       // spinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
+	        spinner.setAdapter(adapter);	       
 	        
-	        amountsSpinner = (Spinner) findViewById(R.id.spinner2);
-	        
+	        //Create spinner for amounts
+	        amountsSpinner = (Spinner) findViewById(R.id.spinner2);	        
 	        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
 	                this, R.array.numbers_array, android.R.layout.simple_spinner_item);
 	        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	        amountsSpinner.setAdapter(adapter);
 	        amountsSpinner.setOnItemSelectedListener(amountsSpinnerListener);
 	        amountList = new ArrayList<EditText>();
-	        
+	     
+	        //Confirm button create
 	        Button confirmButton = (Button) findViewById(R.id.confirm);
-
 	        confirmButton.setOnClickListener(new View.OnClickListener() {
-
 	            public void onClick(View view) {
 	                setResult(RESULT_OK);
 	                finish();
 	            }
-
 	        });
 	        
 	        allowCustomValues = 0;
-	       
+	       //Custom amount input form
 	        final EditText edittext = (EditText) findViewById(R.id.txt_submit_name);
 	        edittext.setTypeface(font);
 	        edittext.setSingleLine();
-	//        edittext.setImeOptions(EditorInfo.IME_ACTION_DONE);
 	        edittext.setOnEditorActionListener(
 	        		new EditText.OnEditorActionListener(){
 	        			@Override
-	        			public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
-	        				
+	        			public boolean onEditorAction(TextView v, int actionId, KeyEvent event){	        				
 	        				if(actionId == EditorInfo.IME_ACTION_DONE){
 	        			     	edittext.setBackgroundDrawable(null);
 	        			     	InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -154,7 +147,7 @@ public class NewGameActivity extends Activity {
 	        amountList.add(edittext);
 	        incrementingId = 1;
 	       
-
+	        //Go through everything and apply the font
 	        View rootView = findViewById(R.id.ScrollView01);
 	        ViewGroup viewGroup = (ViewGroup) rootView;
 	        ViewGroup viewGroup2 = (ViewGroup) viewGroup.getChildAt(0);
@@ -169,6 +162,7 @@ public class NewGameActivity extends Activity {
 	        	}
 
 	        }
+	        //If it's the first time making a game. Display a popup with help
 	        checkFirstTime(rootView);
 
 	        rootView = findViewById(R.id.lbl_submit_name);
@@ -183,9 +177,10 @@ public class NewGameActivity extends Activity {
 	        LinearLayout submitScoreLayout = (LinearLayout)findViewById(R.id.additional_value);	       			
 	        submitScoreLayout.removeAllViews();
 	        amountList.removeAll(amountList);
-	        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Celeste_Hand.ttf");  
-	        for(int i = 0; i < numOfAmounts; i++){
-	        	 	 				            	  
+	        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Celeste_Hand.ttf");
+
+	        //For the amount chosen, create that many custom amount form boxes
+	        for(int i = 0; i < numOfAmounts; i++){	        	 	 				            	 
 	             // Create new LayoutInflater - this has to be done this way, as you can't directly inflate an XML without creating an inflater object first
 	             LayoutInflater inflater = getLayoutInflater();
 	             View additionalView = inflater.inflate(R.layout.additional_value, null);
@@ -193,7 +188,6 @@ public class NewGameActivity extends Activity {
 	             newEditLabel.setTypeface(font);
 	             EditText newEdit = (EditText) additionalView.findViewById(R.id.txt_submit_name);
 	             newEdit.setTypeface(font);
-	             //EditText newEdit = (EditText) findViewById(R.layout.additional_value);
 	             newEdit.setId(R.id.txt_submit_name + incrementingId);
 	             incrementingId++;
 	             submitScoreLayout.addView(additionalView);
@@ -209,7 +203,6 @@ public class NewGameActivity extends Activity {
 	 	        			public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
 	 	        				
 	 	        				if(actionId == EditorInfo.IME_ACTION_DONE){
-	 	        			     	//finalEdit.setBackgroundDrawable(null);
 	 	        			     	InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 	 	        		            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 	 	        			     	return true;
@@ -217,26 +210,20 @@ public class NewGameActivity extends Activity {
 	 	        				return false;
 	 	        			}
 	 	        		});
-	             
-	             
-	             
-	             
-	             amountList.add(finalEdit);
-	             
-	          
+	             //Add the layout to the list
+	             amountList.add(finalEdit);	         
 	        }
 		}
 
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {
-			// TODO Auto-generated method stub
-			
+					
 		}
 	};
+	//Show help dialog
 	private OnClickListener helpListener = new OnClickListener(){
 		public void onClick(View v){
-			helpDialog(v);
-			
+			helpDialog(v);			
 		}
 	};
 	private OnClickListener addBoxListener = new OnClickListener(){
@@ -245,16 +232,16 @@ public class NewGameActivity extends Activity {
 
 			// Get a reference to the score_name_entry object in score.xml
             LinearLayout submitScoreLayout = (LinearLayout)findViewById(R.id.additional_value);
-            
- 
+             
             // Create new LayoutInflater - this has to be done this way, as you can't directly inflate an XML without creating an inflater object first
             LayoutInflater inflater = getLayoutInflater();
             View additionalView = inflater.inflate(R.layout.additional_value, null);
+            
+            //Set up the layout for the added amounts form box
             TextView newEditLabel = (TextView) additionalView.findViewById(R.id.lbl_submit_name);
             newEditLabel.setTypeface(font);
             EditText newEdit = (EditText) additionalView.findViewById(R.id.txt_submit_name);
             newEdit.setTypeface(font);
-            //EditText newEdit = (EditText) findViewById(R.layout.additional_value);
             newEdit.setId(R.id.txt_submit_name + incrementingId);
             incrementingId++;
             submitScoreLayout.addView(additionalView);
@@ -278,24 +265,20 @@ public class NewGameActivity extends Activity {
             
             EditText lastEdit = amountList.get(amountList.size()-1);
             lastEdit.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-            
+            //Add the form to the list of amount forms
             amountList.add(finalEdit);
-            
-         
+                     
 		}
 	};
 	public void onCheckboxClicked(View v) {
         // Perform action on clicks, depending on whether it's now checked
 		LinearLayout submitScoreLayout = (LinearLayout)findViewById(R.id.additional_value);
-        
-//       
+               
 		 if (((CheckBox) v).isChecked()) {
 			 submitScoreLayout.removeAllViews();
-			 //Log.d(TAG,"removing stuff");
 			 amountList.removeAll(amountList);
 			 allowCustomValues = 1;
 		 } else {
-			 //Log.d(TAG,"Adding back the additional boxes");
 			 // Create new LayoutInflater - this has to be done this way, as you can't directly inflate an XML without creating an inflater object first
 	        LayoutInflater inflater = getLayoutInflater();
 	        View additionalView = inflater.inflate(R.layout.additional_value, null);
@@ -317,10 +300,12 @@ public class NewGameActivity extends Activity {
         saveState();
         outState.putSerializable(GamesDbAdapter.C_ID, mRowId);
     }
-
+	
+	//If the user pauses this or exits, save the settings
 	@Override
     protected void onPause() {
         super.onPause();
+        //If the user didn't put in a title or starting amount, the game ain't legit
         if(!(mTitleText.getText().toString().matches("")) && !(mStartingAmountText.getText().toString().matches("")));
         {
         	if(mTitleText.getText().toString().matches("")){
@@ -334,7 +319,9 @@ public class NewGameActivity extends Activity {
         	}
         }
     }
+	//Create
 	private void helpDialog(View v){
+		//Set basic layout stuff.
 		final Dialog helpDialog = new Dialog(v.getContext());
 		helpDialog.setContentView(R.layout.helpdialog);
     	RelativeLayout helpLayout = (RelativeLayout) helpDialog.findViewById(R.id.helpRelativeDialog);
@@ -343,22 +330,20 @@ public class NewGameActivity extends Activity {
 		helpDialog.setTitle("Help");
 		helpDialog.show();
 		
-		ViewGroup viewGroup = (ViewGroup) helpLayout;
-        
+		//Apply the font to everything
+		ViewGroup viewGroup = (ViewGroup) helpLayout;       
         for(int i = 0; i < viewGroup.getChildCount(); i++){
-        	View helpView = viewGroup.getChildAt(i);
-        	
+        	View helpView = viewGroup.getChildAt(i);	        	
         	try{
-            ((TextView )helpView).setTypeface(font);
-            ((TextView )helpView).setTextSize(25);
-            ((TextView )helpView).setTextColor(Color.BLACK);
-
+        		((TextView )helpView).setTypeface(font);
+        		((TextView )helpView).setTextSize(25);
+        		((TextView )helpView).setTextColor(Color.BLACK);
         	}catch(Exception e){
         	}
 
         }
+        //Set stuff for the close button
 		Button closeButton = (Button) helpDialog.findViewById(R.id.helpClose);
-//		helpLayout.addView(closeButton);
 		closeButton.setTypeface(font);
 		closeButton.setText("Close");
 		closeButton.setOnClickListener(new View.OnClickListener() {
@@ -368,10 +353,14 @@ public class NewGameActivity extends Activity {
 				
 		});
 	}
+	//Check to see if this is the first time creating a game
 	private void checkFirstTime(View v){
+		//Check the share preferences to confirm
 		SharedPreferences myPrefs = this.getSharedPreferences("firstTime",MODE_WORLD_READABLE);
         String firstTimeBoolean = myPrefs.getString("firstTime","");
+        //If there is nothing there then we know it's the first time.
         if(firstTimeBoolean.equals("")){
+        	//Show the help dialog and set the user no longer being the first time creating a game .
         	helpDialog(v);
         	SharedPreferences sharedPreferences = getSharedPreferences("firstTime",MODE_WORLD_READABLE);
 	        SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -379,11 +368,14 @@ public class NewGameActivity extends Activity {
 	        editor.commit();
         }
 	}
+	
 	private void saveState() {
+		//Get information from form to save to db
         String title = mTitleText.getText().toString();
         int startingAmount = Integer.parseInt(mStartingAmountText.getText().toString());
         int totalPlayers = Integer.parseInt(spinner.getSelectedItem().toString());
-         
+        
+        //Parse the amounts to save into the db
         ArrayList<String> items = new ArrayList<String>();
         for(EditText amount : amountList){
         	items.add(amount.getText().toString());
@@ -393,25 +385,17 @@ public class NewGameActivity extends Activity {
         try {
 			json.put("uniqueArrays", new JSONArray(items));
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
         String amounts = json.toString();
-        
-        
-        //if (mRowId == null) {
-        	//Log.d(TAG,"not worrying about mrowId at the moment");
-            long id = gameCounter.createGame(title, startingAmount,totalPlayers,amounts,allowCustomValues);
+       //Save the games
+        long id = gameCounter.createGame(title, startingAmount,totalPlayers,amounts,allowCustomValues);
             if (id > 0) {
                 mRowId = id;
-                //Log.d(TAG,"succesfully,id is " + id);
-            }
-        //} 
-//        else {
-//        	gameCounter.updateGame(mRowId, title, startingAmount,totalPlayers,amounts);
-//        }
-    }
-    
+   
+            }   
+		}
+//Deprecated    
 //    public class MyOnItemSelectedListener implements OnItemSelectedListener {
 //
 //        public void onItemSelected(AdapterView<?> parent,

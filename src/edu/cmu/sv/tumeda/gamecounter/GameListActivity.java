@@ -35,6 +35,7 @@ public class GameListActivity extends ListActivity {
 	private static final int NEWGAME_ID = 3;
 
     /** Called when the activity is first created. */
+	//We create the ui for our list of games.
     @Override
     public void onCreate(Bundle savedInstanceState) {
        
@@ -42,41 +43,43 @@ public class GameListActivity extends ListActivity {
         setContentView(R.layout.gamelist);   
         gameCounter = (GameCounterApplication) getApplication();		
         
+        //Populate the list with our games
         fillData();
+        //Set up context menu to work with our list of games
         registerForContextMenu(getListView());
-
+        //Set the font for everything
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Celeste_Hand.ttf");  
 
+        //Set the help button
         Button helpButton = (Button)findViewById(R.id.listHelp);
         helpButton.setOnClickListener(helpListener);
         
+        //Iterate through all views and replace the font.
         View rootView = findViewById(android.R.id.list);
         ViewGroup viewGroup = (ViewGroup) rootView.getParent();
         for(int i = 0; i < viewGroup.getChildCount(); i++){
         	View v = viewGroup.getChildAt(i);
-
         	try{
             	((TextView) v).setTypeface(font);
             	((TextView) v).setTextSize(25);
-            	//.d(TAG,"At " + i + " font set");
         	}catch(Exception e){
-        		//Log.d(TAG,"wasn't a textview at " + i);
-        	}
 
+        	}
         }
-       
-        
+        //Set the button for creating a new game
+        //create a new activity and start it up.
         Button newRulesButton = (Button)findViewById(R.id.newGameRulesButton);
         newRulesButton.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View view) {
             	Intent i = new Intent(view.getContext(), NewGameActivity.class);
-       	     startActivityForResult(i, ACTIVITY_CREATE);
+       	     	startActivityForResult(i, ACTIVITY_CREATE);
             }
 
         });
     }
+    //Fill our list with all the game rules we have.
     private void fillData() {
+    	//Fetch all the game rules from the DB
         Cursor gamesCursor = gameCounter.fetchAllGames();
         startManagingCursor(gamesCursor);
 
@@ -102,14 +105,15 @@ public class GameListActivity extends ListActivity {
         };
         setListAdapter(games);
     }
+    //On help button press, display a help dialog
     private OnClickListener helpListener = new OnClickListener(){
 		public void onClick(View v){
-			helpDialog(v);
-			
+			helpDialog(v);			
 		}
 	};
     private void helpDialog(View v){
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	//Configure the alert
     	builder.setMessage("Click and hold a game title to see more options!")
     	       .setCancelable(false)
     	       .setPositiveButton("Close", new DialogInterface.OnClickListener() {
@@ -117,53 +121,15 @@ public class GameListActivity extends ListActivity {
    	                dialog.cancel();
     	           }
     	       });
-    	     
-    	AlertDialog alert = builder.create();
-    	
-    	alert.show();
-    	//		final Dialog helpDialog = new Dialog(v.getContext());
-//		helpDialog.setContentView(R.layout.helplistdialog);
-//    	RelativeLayout helpLayout = (RelativeLayout) helpDialog.findViewById(R.id.helpRelativeDialog);
-////   	 	Drawable outline = getResources().getDrawable(R.drawable.android_bg2);
-////
-////    	helpLayout.setBackgroundDrawable(outline);
-//	    Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Celeste_Hand.ttf");  
-//
-//		helpDialog.setTitle("Help");
-//		helpDialog.show();
-//		
-//		
-//		ViewGroup viewGroup = (ViewGroup) helpLayout;
-//        
-//        for(int i = 0; i < viewGroup.getChildCount(); i++){
-//        	View helpView = viewGroup.getChildAt(i);
-//        	
-//        	try{
-//            ((TextView )helpView).setTypeface(font);
-//            ((TextView )helpView).setTextSize(25);
-//            ((TextView )helpView).setTextColor(Color.BLACK);
-//
-//        	}catch(Exception e){
-//        	}
-//
-//        }
-//		Button closeButton = (Button) helpDialog.findViewById(R.id.helpClose);
-////		helpLayout.addView(closeButton);
-//		closeButton.setTypeface(font);
-//		closeButton.setText("Close");
-//		closeButton.setOnClickListener(new View.OnClickListener() {
-//			public void onClick(View view) {
-//				helpDialog.dismiss();
-//			}
-//				
-//		});
+    	//Show the alert     
+    	AlertDialog alert = builder.create();    	
+    	alert.show();    	
 	} 
+    
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        //Log.d(TAG,"row id of: " + id);
         Cursor cursor = ((Cursor) l.getItemAtPosition(position));
-        //Log.d(TAG,"Something else " +  cursor.getString(cursor.getColumnIndexOrThrow(GamesDbAdapter.C_ID)));
         Intent i = new Intent(this, GameCounterActivity.class);
         i.putExtra(GamesDbAdapter.C_ID, id);
         startActivityForResult(i, ACTIVITY_EDIT);
@@ -195,12 +161,14 @@ public class GameListActivity extends ListActivity {
     	
     	return true;
     }
+    //Reopulate list after we finish activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         fillData();
     }
     
+    //Context menu if a list item is held down. 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
             ContextMenuInfo menuInfo) {
@@ -209,12 +177,11 @@ public class GameListActivity extends ListActivity {
         menu.add(0, NEWGAME_ID, 0, R.string.menu_newgame);
 
     }
-
+    //Handle what happens if we select a context menu option
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
     	switch(item.getItemId()) {
-
             case DELETE_ID:                
                 gameCounter.deleteGame(info.id);
                 fillData();
